@@ -1,1 +1,15 @@
 @import "tailwindcss";
+
+.footer-bg {
+    background-image: url('../../public/footer-background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: local;
+  }
+
+  .header-bg {
+    background-image: url('../../public/header-background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+  }
