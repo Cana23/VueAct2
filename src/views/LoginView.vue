@@ -44,11 +44,8 @@
   
   const userStore = useUserStore()
   const handleSubmitLogin = handleSubmit(async (values) => {
-    await userStore.login(values.email, values.password).then(() => {
-        router.push({ name: 'Home' })
-    })
-  })
-
-
+    await userStore.login(values.email, values.password)
+    router.push({ name: 'Home' })
+})
 
   </script>

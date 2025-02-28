@@ -73,9 +73,10 @@ const [password, passwordAttrs] = defineField('password', { validateOnModelUpdat
 const [confirmPassword, confirmPasswordAttrs] = defineField('confirmPassword', { validateOnModelUpdate: true })
 
 const userStore = useUserStore()
+
 const handleSubmitRegister = handleSubmit(async (values) => {
-    await userStore.register(values.email, values.password).then(() => {
-        router.push({ name: 'Home' })
-    })
+    await userStore.register(values.email, values.password)
+    router.push({ name: 'Home' }) // Redirige después de confirmar el registro
 })
+
 </script>

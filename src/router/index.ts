@@ -36,12 +36,18 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const userStore = useUserStore()
-  if (to.meta.requiresAuth && !userStore.isLoggedIn) {
-    next('/login')
+  const userStore = useUserStore();
+  const storedToken = localStorage.getItem("token");  
+
+  console.log("Token en beforeEach desde localStorage:", storedToken);
+  console.log("Token en beforeEach desde store:", userStore.token);
+
+  if (to.meta.requiresAuth && !storedToken) {
+    next("/login");
   } else {
-    next()
+    next();
   }
-})
+});
+
 
 export default router

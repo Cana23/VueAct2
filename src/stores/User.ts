@@ -1,57 +1,54 @@
 import { defineStore } from "pinia";
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { useStorage } from "@vueuse/core";
 import { UserServices } from "../services/UserServices";
-import { useRouter } from "vue-router";
 import { logService } from "../services/LogServices";
 import type { User } from "../interfaces/User";
 
 export const useUserStore = defineStore("user", () => {
   const token = useStorage("token", "");
   const user = ref({} as User);
-  const router = useRouter();
 
+  const isLoggedIn = computed(() => token.value !== '' && token.value !== undefined);
 
-  const isLoggedIn = computed(() => token.value !== '' && token.value !== undefined)
+  watch(token, (newValue) => {
+    console.log("Token ha cambiado, isLoggedIn se actualizará:", newValue);
+  });
 
-  const login = async (email: string, password: string) => {
+  async function login(email: string, password: string) {
     try {
       const response = await UserServices.loginService(email, password);
-      if (response.status === 200) {
+      if (response?.token) {
+        console.log("Login exitoso, token recibido:", response.token);
         token.value = response.token;
         user.value = response;
-        router.push("/");
       }
     } catch (error: any) {
-      const errorMessage = "Error al ingresar:";
-      console.error(errorMessage, error);
-      await logService.log("error", errorMessage, { error, email });
+      console.error("Error al ingresar:", error);
+      await logService.log("error", "Error al ingresar", { error, email });
     }
-  };
+  }
 
-  const register = async (email: string, password: string) => {
+  async function register(email: string, password: string) {
     try {
       return await UserServices.registerService(email, password);
     } catch (error: any) {
-      const errorMessage = "Error en registrar usuario:";
-      console.error(errorMessage, error);
-      await logService.log("error", errorMessage, { error, email });
+      console.error("Error en registrar usuario:", error);
+      await logService.log("error", "Error en registrar usuario", { error, email });
     }
-  };
+  }
 
-  const logout = async () => {
+  async function logout() {
     try {
       await UserServices.logoutService(token.value);
     } catch (error: any) {
-      const errorMessage = "Error al cerrar sesion:";
-      console.error(errorMessage, error);
-      await logService.log("error", errorMessage, { error });
+      console.error("Error al cerrar sesión:", error);
+      await logService.log("error", "Error al cerrar sesión", { error });
     } finally {
       token.value = "";
       user.value = {} as User;
-      router.push("/login");
     }
-  };
+  }
 
   return { token, user, isLoggedIn, login, register, logout };
 });

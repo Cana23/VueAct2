@@ -23,23 +23,29 @@ const handleError = async (error: any, context: string) => {
   throw error;
 };
 
+const headers = {
+  'Content-Type': 'application/json',
+  Authorization: 'Bearer ' + localStorage.getItem('token'),
+}
+
 export const UserServices = {
   async loginService(email: string, password: string) {
     try {
-      return await genericRequest(`${BASE_URL}/login`, "POST", {
-        email,
-        password,
-      });
+      const response = await genericRequest(`${BASE_URL}/login`, "POST", { email, password, headers });
+      console.log("Respuesta del backend en loginService:", response);  // <-- Agrega esto
+      return response;
     } catch (error) {
       await handleError(error, "login");
     }
-  },
+},
+
 
   async registerService(email: string, password: string) {
     try {
       return await genericRequest(`${BASE_URL}/register`, "POST", {
         email,
         password,
+        headers,
       });
     } catch (error) {
       await handleError(error, "login");
