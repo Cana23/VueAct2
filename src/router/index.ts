@@ -1,16 +1,17 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
-import LoginView from '@/views/LoginView.vue'
-import RegisterView from '@/views/RegisterView.vue'
-import NotFoundView from '@/views/NotFoundView.vue'
+import { useUserStore } from '../stores/User'
+import DashboardView from '../views/DashboardView.vue'
+import LoginView from '../views/LoginView.vue'
+import RegisterView from '../views/RegisterView.vue'
+import NotFoundView from '../views/NotFoundView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      name: 'home',
-      component: HomeView,
+      name: 'Home',
+      component: DashboardView,
       meta: { requiresAuth: true }
     },
     {
@@ -34,9 +35,13 @@ const router = createRouter({
   ],
 })
 
-router.beforeEach((a, b, next) => {
-  //Validaciones dependiendo del contexto
-  next()
+router.beforeEach((to, from, next) => {
+  const userStore = useUserStore()
+  if (to.meta.requiresAuth && !userStore.isLoggedIn) {
+    next('/login')
+  } else {
+    next()
+  }
 })
 
 export default router
