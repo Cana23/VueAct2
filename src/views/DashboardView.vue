@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, defineAsyncComponent } from 'vue'
 
+
 //Componentes
 import FooterComponent from '../components/FooterComponent.vue'
 import HeaderComponent from '../components/HeaderComponent.vue'
@@ -82,6 +83,7 @@ onUnmounted(() => {
 
 <template>
   <div class="min-h-screen flex flex-col">
+    
     <!-- Header fijo -->
     <HeaderComponent>
       <template #lista>

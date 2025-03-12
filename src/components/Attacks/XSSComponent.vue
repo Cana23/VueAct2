@@ -13,17 +13,17 @@
           <input
             autocomplete="false"
             id="xssInput"
-            v-model="xssInput"
-            class="input input-bordered w-full mb-4"
+            v-model="CommentUser"
+            class="input border w-full mb-4"
           />
-          <button type="submit" class="btn btn-primary">Enviar</button>
+          <button type="submit" class="border bg-slate-500 text-white p-2 px-4 rounded-xl">Enviar</button>
         </form>
-        <div v-html="xssOutput" class="prose mb-4"></div>
+        <div v-html="Comment" class="prose mb-4"></div>
         <div>
           <h3 class="text-xl font-bold mb-2">Ejemplos básicos de XSS:</h3>
-          <ul class="list-disc list-inside">
-            <li v-for="(comment, index) in comments" :key="index" class="mb-2">
-              <p v-html="comment.comment"></p>
+          <ul class="">
+            <li v-for="comment, index in comment" :key="index" class="mb-2">
+              <p v-html="comment"></p>
             </li>
           </ul>
         </div>
@@ -47,23 +47,36 @@
   </template>
   
   <script setup lang="ts">
-  import { ref } from 'vue'
-  
-  const xssInput = ref('')
-  const xssOutput = ref('')
-  
+  import { ref, type Ref } from 'vue'
+  import { reactive, type Reactive } from 'vue'
+  import { onMounted } from 'vue'
+  import { getCommentService, addCommentService } from '../../services/AttackService.ts'
+
+  const comments:Ref<Comment[]> = ref([{ id: 1, user_id: 1, comment: 'Hola crayola' }])
+
+  const CommentUser = ref('')
   const show = ref(false)
-  
-  const submitXSS = () => {
-    xssOutput.value = xssInput.value
+
+  const results = ref('')
+
+  const submitComment = async () => {
+    if (CommentUser.value) {
+      const response = await addCommentService(1, CommentUser.value)
+      if (response.message) {
+        alert(response.message)
+      }
+    }
   }
+
+  onMounted(async () => {
+    console.log('onMounted ejecutado')
+    const response = await getCommentService()
+    if (response.results) {
+      comments.value = response.results
+    }else{
+      comments.value = [{ id: 0, user_id: 0, comment: 'Perdiste, manito'}]
+    }
+  })
   
-  //Aqui debemos cambiar código para consumir el endpoint : /attacls/xss
-  // Para obtener los comentarios de la base de datos
-  // y tambien para enviar los comentarios a la base de datos
   
-  const comments: any[] = [
-    { comment: '<img src="x" onerror="alert(1)">' },
-    { comment: '<a href="https://userinyerface.com/" class="btn btn-primary mx-2" > Clickeame </a>' },
-  ]
   </script>

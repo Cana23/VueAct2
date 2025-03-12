@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { useUserStore } from '../stores/User'
 import DashboardView from '../views/DashboardView.vue'
 import LoginView from '../views/LoginView.vue'
 import RegisterView from '../views/RegisterView.vue'
@@ -36,12 +35,7 @@ const router = createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  const userStore = useUserStore();
-  const storedToken = localStorage.getItem("token");  
-
-  console.log("Token en beforeEach desde localStorage:", storedToken);
-  console.log("Token en beforeEach desde store:", userStore.token);
-
+  const storedToken = localStorage.getItem("token");
   if (to.meta.requiresAuth && !storedToken) {
     next("/login");
   } else {
